@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+    xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+    xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:task="http://www.springframework.org/schema/task"  
+	
+    xsi:schemaLocation=
+       "http://www.springframework.org/schema/data/mongo 
+	    http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+	    
+	    http://www.springframework.org/schema/data/repository
+	    http://www.springframework.org/schema/data/repository/spring-repository-1.8.xsd
+	    
+	    
+	    http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	    http://www.springframework.org/schema/task 
+	    http://www.springframework.org/schema/task/spring-task-4.2.xsd
+	    http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		
+		http://www.springframework.org/schema/jee 
+		http://www.springframework.org/schema/jee/spring-jee-4.2.xsd">
+
+	<description>Spring公共配置 </description>
+
+	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
+	<context:component-scan base-package="cn.shell">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- JSR303 Validator定义 -->
+ 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	
+	 <!-- mongoDB的配置对象， option可选择使用 -->  
+    <bean id="mongoOptions" class="com.mongodb.MongoOptions">  
+      <!-- 服务器是否自动重连，默认为false -->  
+      <property name="autoConnectRetry" value="true" />
+      <!-- 对同一个服务器尝试重连的时间(毫秒)，设为0时默认使用15秒 -->  
+      <property name="maxAutoConnectRetryTime" value="5" />  
+      <!-- 与每个主机的连接数，默认为10 -->  
+      <property name="connectionsPerHost" value="10" />  
+      <!-- 连接超时时间(毫秒)，默认为10000 -->  
+      <property name="connectTimeout" value="2000" />  
+      <!-- 是否创建一个finalize方法，以便在客户端没有关闭DBCursor的实例时，清理掉它。默认为true -->  
+      <property name="cursorFinalizerEnabled" value="true" />  
+      <!-- 线程等待连接可用的最大时间(毫秒)，默认为120000 -->  
+      <property name="maxWaitTime" value="12000" />  
+      <!-- 可等待线程倍数，默认为5.例如connectionsPerHost最大允许10个连接，则10*5=50个线程可以等待，更多的线程将直接抛异常 -->  
+      <property name="threadsAllowedToBlockForConnectionMultiplier" value="5" />  
+      <!-- socket读写时超时时间(毫秒)，默认为0，不超时 -->  
+      <property name="socketTimeout" value="0" />  
+      <!-- 是socket连接在防火墙上保持活动的特性，默认为false -->  
+      <property name="socketKeepAlive" value="true" />  
+      <!-- 对应全局的WriteConcern.SAFE，默认为false -->  
+      <property name="safe" value="true" />  
+      <!-- 对应全局的WriteConcern中的w，默认为0 -->  
+      <property name="w" value="0" />  
+      <!-- 对应全局的WriteConcern中的wtimeout，默认为0 -->  
+      <property name="wtimeout" value="0" />  
+      <!-- 对应全局的WriteConcern.FSYNC_SAFE，如果为真，每次写入要等待写入磁盘，默认为false -->  
+      <property name="fsync" value="false" />  
+      <!-- 对应全局的WriteConcern.JOURNAL_SAFE，如果为真，每次写入要等待日志文件写入磁盘，默认为false -->  
+      <property name="j" value="false" />  
+    </bean>  
+  
+ 	<!-- mongo start -->
+	<!-- mongo:mongo host="127.0.0.1" port="8013"/ -->
+	
+	<bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">  
+	
+		<!-- 发布数据库 -->
+		<property name="host" value="120.79.78.99" /> 
+		<property name="port" value="27017" />
+		
+		
+		
+		<!-- 本地数据库
+		<property name="host" value="127.0.0.1" /> 
+		<property name="port" value="10002" />
+		 -->
+		
+	    <property name="mongoOptions" ref="mongoOptions"/>  
+	    <!-- 设定写策略，默认为WriteConcern.SAFE，优先级高于mongoOptions中的safe -->  
+	    <property name="writeConcern" value="SAFE"/>  
+	</bean>  
+	
+	<mongo:db-factory dbname="myshop" mongo-ref="mongo"/>
+	
+    <mongo:mapping-converter base-package="cn.shell.entity" />
+    <mongo:repositories base-package="cn.shell.repository" />
+    
+	<!--设置用户验证 
+	-->
+	<bean id="userCredentials" class="org.springframework.data.authentication.UserCredentials">
+		<constructor-arg name="username" value="xxx" />
+		<constructor-arg name="password" value="13670228300" />
+	</bean>
+
+	<!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成，databaseName要为mongodb帐号所创建的数据库 -->
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongo" ref="mongo" />
+		<constructor-arg name="databaseName" value="myshop" />
+		<constructor-arg name="userCredentials" ref="userCredentials" />
+	</bean>
+    
+    <bean class="org.springframework.data.mongodb.core.MongoExceptionTranslator"/>
+    
+    <bean id="multipartResolver"
+	      class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	  <property name="maxUploadSize" value="1048576000" />
+	  <property name="maxInMemorySize" value="1204800" />
+    </bean> 
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="message"/>
+        <property name="useCodeAsDefaultMessage" value="true"/>
+    </bean>
+    
+    <!-- 定时任务 
+    <task:scheduled-tasks>
+    	<task:scheduled ref="scheduleService" method="scheduleTask" cron="0 0 0 * * ?"/>
+    </task:scheduled-tasks>
+    -->
+    
+    <!-- 异步注释@Async启用 -->
+    <task:annotation-driven executor="myExecutor" scheduler="myScheduler" />
+	<task:executor id="myExecutor" pool-size="50" />
+	<task:scheduler id="myScheduler" pool-size="1000" />  
+</beans>
