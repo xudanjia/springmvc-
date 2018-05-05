@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xdj.mapper.UserMapper">
+    
+	<select id="selectUser" parameterType="com.xdj.model.Kuser" resultType="com.xdj.model.Kuser">
+		SELECT * FROM KUSER WHERE kuname = #{kuname} and kupassword = #{kupassword}
+	</select>
+	
+	<insert id="insertUser" parameterType="com.xdj.model.Kuser">
+		insert into kuser(kuid,kuname,kupassword) value(#{kuid},#{kuname},#{kupassword})
+	</insert>
+	
+	<select id="selectAllUser" resultType="com.xdj.model.Kuser">
+		SELECT * FROM KUSER
+	</select>
+	
+ 	<!-- 模糊查询用户 -->
+	<select id="selectUserByName" parameterType="java.lang.String" resultType="com.xdj.model.Kuser">
+	    select * from kuser where kuname like '%${value}%'
+	</select>
+	
+</mapper>

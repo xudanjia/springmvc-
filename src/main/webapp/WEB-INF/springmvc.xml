@@ -11,11 +11,10 @@
 		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-4.0.xsd
-		
 		http://www.springframework.org/schema/aop 
 		http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
     ">
-	<context:component-scan base-package="controller"></context:component-scan>
+	<context:component-scan base-package="com.xdj"></context:component-scan>
 	
 	<mvc:annotation-driven>
 		<!-- 解决返回String时乱码   -->
@@ -30,6 +29,14 @@
 	        </bean>
 	    </mvc:message-converters>  
 	</mvc:annotation-driven>
+	
+	<!-- 将无法mapping到Controller的path交给default servlet handler处理 -->		
+	<mvc:default-servlet-handler/>
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+	<bean id="cookieLocaleResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/>
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+	    <property name="defaultLocale" value="zh_CN"/>
+    </bean>
 	
 	<mvc:resources location="/css/" mapping="/css/**"/>
 	<mvc:resources location="/" mapping="/*.html"/>

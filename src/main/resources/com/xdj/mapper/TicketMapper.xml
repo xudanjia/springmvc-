@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xdj.mapper.TicketMapper">
+    
+	<select id="selectTicket" parameterType="com.xdj.model.Ticket" resultType="com.xdj.model.Ticket">
+		select * from ticket where tid = #{tid}
+	</select>
+	
+	<insert id="insertTicket" parameterType="com.xdj.model.Ticket">
+		insert into ticket(tid,departure_add,destination_add,departure_time,arrival_time,price,uname_code) value(#{tid},#{departure_add},#{destination_add},#{departure_time},#{arrival_time},#{price},#{uname_code})
+	</insert>
+	
+	<select id="selectAllTicket" resultType="com.xdj.model.Ticket">
+		select * from ticket
+	</select>
+	
+ 	<!-- 模糊查询用户 -->
+	<select id="selectTicketByUnameCode" parameterType="java.lang.String" resultType="com.xdj.model.Ticket">
+	    select * from ticket where uname_code like '%${value}%'
+	</select>
+	
+</mapper>
