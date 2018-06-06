@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xdj.dao.PersonDao">
+    
+	<select id="findPersonById" parameterType="int" resultMap="PersonMapper">
+		SELECT * FROM kperson WHERE id = #{id}
+	</select>
+	
+	<resultMap type="com.xdj.model.Kperson" id="PersonMapper" >
+    	<id column="id" property="id"/>
+    	<result column="name" property="name"/>
+    	<association property="kcard" column="id" select="com.xdj.dao.KCardDao.findCardById"
+    	    javaType="com.xdj.model.Kcard"></association>
+  	</resultMap>
+	
+</mapper>

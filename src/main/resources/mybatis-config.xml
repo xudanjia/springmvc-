@@ -32,6 +32,9 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	<mappers>
 		<mapper resource="com/xdj/mapper/UserMapper.xml"/>
 		<mapper resource="com/xdj/mapper/TicketMapper.xml"/>
+		<mapper resource="com/xdj/mapper/KCardMapper.xml"/>
+		<mapper resource="com/xdj/mapper/KPersonMapper.xml"/>
+		<mapper resource="com/xdj/mapper/OrdersMapper.xml"/>
 		
 		<!--通过resource方法一次加载一个映射文件 -->
 		<!-- <mapper resource="mapper/UserMapper.xml"/> -->

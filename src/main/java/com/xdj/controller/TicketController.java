@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.xdj.model.Ticket;
+import com.xdj.model.Users;
 import com.xdj.service.TicketServiceImpl;
 
 @Controller
@@ -22,19 +26,39 @@ public class TicketController {
 	
 	@RequestMapping("/findAll")
 	public ModelAndView findAll(){
+		
+		ApplicationContext context=new ClassPathXmlApplicationContext("../springmvc.xml");
+		@SuppressWarnings("unchecked")
+		RedisTemplate<String,List<Ticket>> redisTemplate= context.getBean(RedisTemplate.class);
+		
 		List<Ticket> list = ticketServiceImpl.findAll();
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("/NewFile");
 		mv.addObject("tickets",list);
+
+		redisTemplate.opsForValue().set("u", list);
+		List<Ticket> al = (List<Ticket>)redisTemplate.opsForValue().get("u");
+		System.out.println(al);
+		
 		return mv;
 	}
 	
 	@RequestMapping("/getAll")
 	public ModelAndView getAll(){
+		
+		ApplicationContext context=new ClassPathXmlApplicationContext("../springmvc.xml");
+		@SuppressWarnings("unchecked")
+		RedisTemplate<String,List<Ticket>> redisTemplate= context.getBean(RedisTemplate.class);
+		
 		List<Ticket> list = ticketServiceImpl.getAll();
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("/NewFile");
 		mv.addObject("tickets",list);
+
+		redisTemplate.opsForValue().set("u", list);
+		List<Ticket> al = (List<Ticket>)redisTemplate.opsForValue().get("u");
+		System.out.println(al);
+		
 		return mv;
 	}
 	

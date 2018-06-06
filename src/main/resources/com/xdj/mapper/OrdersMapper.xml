@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xdj.dao.OrdersDao">
+    
+	<select id="findOrdersUser" parameterType="java.lang.String" resultType="com.xdj.model.Orders">
+		SELECT orders.*,kuser.kuname FROM orders,kuser WHERE orders.kuid = kuser.kuid and kuser.kuname = '${value}'
+	</select>
+	
+</mapper>
